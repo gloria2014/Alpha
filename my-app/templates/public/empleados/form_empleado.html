@@ -55,10 +55,11 @@
                         Nombre completo
                       </label>
                       <input
-                        type="text"
+                        type="text" id="letras"
                         name="Nombre_Completo"
-                        class="form-control"
+                        class="form-control" 
                         required />
+                        
                     </div>
                     <div class="col-md-4">
                       <label for="RUT" class="form-label">
@@ -102,7 +103,7 @@
                         Teléfono 
                       </label>
                       <input
-                        class="form-control"
+                        class="form-control .no-controls"
                         type="text"
                         id="Telefono"
                         name="Telefono"
@@ -361,45 +362,51 @@
 <script src="{{ url_for('static', filename ='assets/customJS/file.js') }}"></script>
 <script>
  
- const filtrarComunas = async (Id_Region) => {
-    const csrfTokenValue = document.querySelector(
-      "[name=csrfmiddlewaretoken]"
-    ).value;
-    const headers = {
-      "X-CSRFToken": csrfTokenValue,
-    };
+//  $('input[type=text]').keypress(function (e) {
+//                 var tecla = document.all ? tecla = e.keyCode : tecla = e.which;
+//                 return !((tecla > 47 && tecla < 58) || tecla == 46);
+//             });
+
+ $('document').ready(function()
+ {
+ 
+ $(".no-controls").keydown(function(event) {
   
-    let url = "/filtrar-municipios/";
-    try {
-      const response = await axios.post(url, { Id_Region }, { headers });
+ // Desactivamos cualquier combinación con shift
+ if(event.shiftKey)
+     event.preventDefault();
   
-      const { data, status } = response;
-      console.log(data.data);
+ /*  
+     No permite ingresar pulsaciones a menos que sean los siguientes
+     KeyCode Permitidos
+     keycode 8 Retroceso
+     keycode 37 Flecha Derecha
+     keycode 39  Flecha Izquierda
+     keycode 46 Suprimir
+ */
+ //No permite mas de 11 caracteres Numéricos
+ if (event.keyCode != 46 && event.keyCode != 8 && event.keyCode != 37 && event.keyCode != 39) 
+     if($(this).val().length >= 11)
+         event.preventDefault();
+
+ // Solo Numeros del 0 a 9 
+ if (event.keyCode < 48 || event.keyCode > 57)
+     //Solo Teclado Numerico 0 a 9
+     if (event.keyCode < 96 || event.keyCode > 105)
+         /*  
+             No permite ingresar pulsaciones a menos que sean los siguietes
+             KeyCode Permitidos
+             keycode 8 Retroceso
+             keycode 37 Flecha Derecha
+             keycode 39  Flecha Izquierda
+             keycode 46 Suprimir
+         */
+         if(event.keyCode != 46 && event.keyCode != 8 && event.keyCode != 37 && event.keyCode != 39)
+             event.preventDefault();
   
-      if (status == 200) {
-        let selectMunicipio = document.querySelector("#Id_Comuna");
-        selectMunicipio.innerHTML = "";
   
-        // Crea una opción por defecto
-        const defaultOption = document.createElement("option");
-        defaultOption.value = "";
-        defaultOption.text = "Seleccione";
-        selectMunicipio.appendChild(defaultOption);
-  
-        // Itera sobre la data para agregar los municipios al select
-        data.data.forEach((item) => {
-          const option = document.createElement("option");
-          option.value = item.Id_Comuna;
-          option.text = item.Nombre;
-          selectMunicipio.appendChild(option);
-        });
-      } else {
-        console.log("No hay Municipios disponibles");
-      }
-    } catch (error) {
-      console.log("Error en la petición", error);
-    }
-  };
-  
+});
+}); 
+
 </script>
 {% endblock %}
